@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+  <link rel="stylesheet" href="main.css" />
+  
+  <!-- <script defer src="main.js"></script> -->
+  <script defer src="script.js"></script>
+
+</head>
+<body>
+  
+  <!-- <input id="input" type="text" /> -->
+  <!-- <button id="submit-text">Send</button> -->
+
+
+  <!-- <input type="file" id="imageInput" />
+  <button id="submit-file">Send</button>
+
+
+  <p id="response">Response: </p> -->
+
+
+
+
+
+
+  <header>
+    <h1>Calorie Counter</h1>
+    <p id="mealCounter">Total Meals: 0</p>
+    <p id="calorieCounter">Total Calories: 0 kcal</p>
+  </header>
+
+  <main>
+    <button id="newMealBtn">+ New Meal</button>
+
+    <div id="mealList" class="scroll-container">
+      <!-- Meal entries will be injected here -->
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Upload Meal Image</h2>
+      <input type="file" id="mealImage" accept="image/*" />
+      <button id="submitMeal">Analyze</button>
+      <div id="response"></div>
+    </div>
+  </div>
+
+
+
+
+
+</body>
+</html>
