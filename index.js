@@ -50,8 +50,14 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
 
   const dataUrl = getImageDataUrl(filePath, extension);
 
+  const notes = req.body.notes;
+
   if (!dataUrl) {
     return res.status(400).json({ error: "Invalid image data." });
+  }
+
+  if (!notes) {
+    return res.status(400).json({ error: "Invalid notes data." });
   }
 
   try {
@@ -71,6 +77,7 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
           role: "user",
           content: [
             { type: "text", text: "What's in this image and how many calories is it?" },
+            { type: "text", text: "These are some of the notes on the food in the picture, " + notes },
             { type: "image_url", image_url: { url: dataUrl, details: "low" } },
           ],
         },
