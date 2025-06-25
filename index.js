@@ -71,6 +71,11 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
         {
           role: "system",
           content:
+            "You use the information provided about the food in the image to better understand what is in the image and how many calories it may contain.",
+        },
+        {
+          role: "system",
+          content:
             "When giving a response structure it with 'Description' and 'Estimated Calories' and only give a number of calories for the estimated calories.",
         },
         {
