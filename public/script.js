@@ -212,18 +212,21 @@ function extractDescriptionAndCalories(text) {
     // Extract description
     let description = '';
     let calories = null;
-    // Try to match 'Description: ...' and 'Estimated Calories: ...'
-    const descMatch = text.match(/Description:\s*([\s\S]*?)\n+Estimated Calories:/i);
+    // Support both plain and markdown-style (with **) formats
+    // Try to match '**Description:** ...' and '**Estimated Calories:** ...'
+    const descMatch = text.match(/\*\*Description:\*\*\s*([\s\S]*?)\n+\*\*Estimated Calories:\*\*/i) ||
+                      text.match(/Description:\s*([\s\S]*?)\n+Estimated Calories:/i);
     if (descMatch) {
         description = descMatch[1].trim();
     } else {
         // fallback: try to get everything before 'Estimated Calories:'
-        const parts = text.split('Estimated Calories:');
+        const parts = text.split(/\*\*Estimated Calories:\*\*|Estimated Calories:/);
         if (parts.length > 1) {
-            description = parts[0].replace('Description:', '').trim();
+            description = parts[0].replace(/\*\*Description:\*\*|Description:/, '').trim();
         }
     }
-    const calMatch = text.match(/Estimated Calories:\s*(\d+)/i);
+    const calMatch = text.match(/\*\*Estimated Calories:\*\*\s*(\d+)/i) ||
+                     text.match(/Estimated Calories:\s*(\d+)/i);
     if (calMatch) {
         calories = parseInt(calMatch[1], 10);
     }
@@ -268,6 +271,7 @@ function aiModeHandler() {
     formData.append("notes", notes);
     axios.post("/api/analyze-image", formData)
         .then(res => {
+            console.log(res.data);
             const text = typeof res.data === 'string' ? res.data : res.data.reply;
             const { description, calories } = extractDescriptionAndCalories(text);
             const newMeal = {
