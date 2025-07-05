@@ -20,7 +20,7 @@
   <div class="container">
         <div class="main-card">
             <!-- Header -->
-            <div class="header">
+            <!-- <div class="header">
                 <h1 class="goal-text">Today's Goal</h1>
                 <div class="goal-number">
                     <span id="dailyGoal">2100</span>
@@ -29,7 +29,7 @@
                 <p class="remaining-text">
                     <span id="remaining">1800</span> kcal remaining
                 </p>
-            </div>
+            </div> -->
 
             <!-- Progress Circle -->
             <div class="progress-container">
@@ -48,7 +48,7 @@
                             fill="none" 
                             stroke-linecap="round"
                             stroke-dasharray="283"
-                            stroke-dashoffset="254.7"
+                            stroke-dashoffset="283"
                         ></circle>
                         <defs>
                             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -58,7 +58,7 @@
                         </defs>
                     </svg>
                     <div class="progress-text">
-                        <div class="eaten-number" id="totalEaten">300</div>
+                        <div class="eaten-number" id="totalEaten">0</div>
                         <div class="eaten-label">kcal Eaten</div>
                     </div>
                 </div>
@@ -153,15 +153,16 @@
                         <input type="number" id="calories" placeholder="Enter calories">
                     </div>
                 </div>
-                <!-- Calculate Button -->
-                <button class="calculate-btn" id="calculateBtn">Calculate</button>
-            </div>
-            <!-- Loader Overlay (now inside modal) -->
-            <div id="loaderOverlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:2000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
-              <div style="border: 6px solid #eee; border-top: 6px solid #9333ea; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite;"></div>
-            </div>
+                            <!-- Calculate Button -->
+            <button class="calculate-btn" id="calculateBtn">Calculate</button>
         </div>
     </div>
+</div>
+
+<!-- Loader Overlay (covers whole screen) -->
+<div id="loaderOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:3000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+  <div style="border: 6px solid #eee; border-top: 6px solid #9333ea; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite;"></div>
+</div>
 
 </body>
 <style>
