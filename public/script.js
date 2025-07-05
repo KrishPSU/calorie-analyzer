@@ -1,17 +1,78 @@
 // Global variables
-let dailyGoal = 2100;
-let meals = [
-    // { 
-    //     id: '1', 
-    //     name: 'Breakfast', 
-    //     calories: 300, 
-    //     notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.' 
-    // }
-];
+// let dailyGoal = 2100;
+let meals = [];
+
+// Local storage functions
+function getCurrentDateKey() {
+    const today = new Date();
+    return `meals_${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function loadMealsFromStorage() {
+    const dateKey = getCurrentDateKey();
+    const storedMeals = localStorage.getItem(dateKey);
+    if (storedMeals) {
+        try {
+            const parsedMeals = JSON.parse(storedMeals);
+            // Convert stored image data back to File objects if they exist
+            meals = parsedMeals.map(meal => {
+                if (meal.imageData) {
+                    // Convert base64 back to File object
+                    const byteCharacters = atob(meal.imageData.split(',')[1]);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                    meal.image = new File([blob], meal.imageName || 'image.jpg', { type: 'image/jpeg' });
+                    delete meal.imageData;
+                    delete meal.imageName;
+                }
+                return meal;
+            });
+        } catch (error) {
+            console.error('Error loading meals from storage:', error);
+            meals = [];
+        }
+    } else {
+        meals = [];
+    }
+}
+
+function saveMealsToStorage() {
+    const dateKey = getCurrentDateKey();
+    // Convert meals to storage format (handle File objects)
+    const mealsForStorage = meals.map(meal => {
+        const mealCopy = { ...meal };
+        if (meal.image instanceof File) {
+            // Convert File to base64 for storage
+            const reader = new FileReader();
+            reader.readAsDataURL(meal.image);
+            mealCopy.imageData = reader.result;
+            mealCopy.imageName = meal.image.name;
+            delete mealCopy.image;
+        }
+        return mealCopy;
+    });
+    localStorage.setItem(dateKey, JSON.stringify(mealsForStorage));
+}
+
+function clearOldData() {
+    const today = new Date();
+    const todayKey = getCurrentDateKey();
+    
+    // Clear all meal data except today's
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('meals_') && key !== todayKey) {
+            localStorage.removeItem(key);
+        }
+    });
+}
 
 // Global DOM elements
-const dailyGoalElement = document.getElementById('dailyGoal');
-const remainingElement = document.getElementById('remaining');
+// const dailyGoalElement = document.getElementById('dailyGoal');
+// const remainingElement = document.getElementById('remaining');
 const totalEatenElement = document.getElementById('totalEaten');
 const progressCircleElement = document.getElementById('progressCircle');
 const mealsContainerElement = document.getElementById('mealsContainer');
@@ -58,16 +119,17 @@ document.addEventListener('keydown', (e) => {
 // Update display
 function updateDisplay() {
     const totalEaten = meals.reduce((sum, meal) => sum + meal.calories, 0);
-    const remaining = dailyGoal - totalEaten;
-    const progressPercentage = (totalEaten / dailyGoal) * 100;
+    // const remaining = dailyGoal - totalEaten;
+    // const progressPercentage = (totalEaten / dailyGoal) * 100;
     
-    // Update text content
-    dailyGoalElement.textContent = dailyGoal;
-    remainingElement.textContent = remaining;
+    // // Update text content
+    // dailyGoalElement.textContent = dailyGoal;
+    // remainingElement.textContent = remaining;
     totalEatenElement.textContent = totalEaten;
     
     // Update progress circle
     const circumference = 2 * Math.PI * 45; // radius = 45
+    const progressPercentage = Math.min((totalEaten / 2100) * 100, 100); // Using 2100 as max
     const offset = circumference - (progressPercentage / 100) * circumference;
     progressCircleElement.style.strokeDashoffset = offset;
     
@@ -166,12 +228,16 @@ function addMeal() {
         notes: notes || undefined
     };
     meals.push(newMeal);
+    saveMealsToStorage();
     updateDisplay();
     closeModal();
 }
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Clear old data and load today's meals
+    clearOldData();
+    loadMealsFromStorage();
     updateDisplay();
     // Set initial button text based on default toggle
     if (aiToggleElement.classList.contains('active')) {
@@ -282,6 +348,7 @@ function aiModeHandler() {
                 notes: description
             };
             meals.push(newMeal);
+            saveMealsToStorage();
             updateDisplay();
             closeModal();
         })
@@ -311,6 +378,7 @@ function manualModeHandler() {
         image: image
     };
     meals.push(newMeal);
+    saveMealsToStorage();
     updateDisplay();
     closeModal();
 }
