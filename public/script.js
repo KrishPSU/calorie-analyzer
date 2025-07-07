@@ -129,7 +129,7 @@ function updateDisplay() {
     
     // Update progress circle
     const circumference = 2 * Math.PI * 45; // radius = 45
-    const progressPercentage = Math.min((totalEaten / 2100) * 100, 100); // Using 2100 as max
+    const progressPercentage = Math.min((totalEaten / 2000) * 100, 100); // Using 2000 as max
     const offset = circumference - (progressPercentage / 100) * circumference;
     progressCircleElement.style.strokeDashoffset = offset;
     
