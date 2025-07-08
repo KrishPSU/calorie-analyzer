@@ -397,3 +397,24 @@ manualToggleElement.addEventListener('click', () => {
     manualSectionElement.classList.remove('hide');
     calculateBtnElement.textContent = 'Add';
 });
+
+
+
+
+function isInStandaloneMode() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true // iOS
+  );
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  var modal = document.getElementById('addToHomeModal');
+  if (isInStandaloneMode()) {
+    // Already running as a PWA/home screen app; hide the modal
+    if (modal) modal.style.display = 'none';
+  } else {
+    // Not running as a PWA; show the modal
+    if (modal) modal.style.display = 'flex';
+  }
+});
